@@ -4,8 +4,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 
-from .serializers import UserSerializer, LoginSerializer
-from .models import User,Login
+from .serializers import UserSerializer, LoginSerializer, ItemSerializer
+from .models import User,Login, Item
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
@@ -62,3 +62,6 @@ class LoginViewSet(viewsets.ModelViewSet):
         return JsonResponse({'status': 'not logged in'})
 
 
+class ItemViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer

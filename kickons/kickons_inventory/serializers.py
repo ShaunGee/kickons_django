@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User,Login
+from .models import User,Login, Item
 import io
 
 '''
@@ -22,6 +22,11 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = Login
+        fields = '__all__'
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
         fields = '__all__'
 
 
