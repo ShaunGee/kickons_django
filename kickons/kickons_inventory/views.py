@@ -65,3 +65,9 @@ class LoginViewSet(viewsets.ModelViewSet):
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
+
+'''
+    @action(['get',])
+    def allItems(self,request):
+    
+        '''
