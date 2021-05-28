@@ -10,10 +10,6 @@ router.register(r'items', views.ItemViewSet)
 #router.register('r.users', views.U)
 
 
-for url in router.urls:
-   print(url, '\n')
-
-
 urlpatterns = [
     path('', include(router.urls)),
     #path('login', include(router.urls)),

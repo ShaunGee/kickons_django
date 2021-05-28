@@ -36,7 +36,7 @@ class Item(models.Model):
     item_title = models.CharField(max_length=20)
     item_caption = models.CharField(max_length=20)
     item_price = models.CharField(max_length=4 ,default = '---')
-    #item_image = models.ImageField(default='none')
+    item_image = models.ImageField(upload_to='items')
 
     def __str__(self):
         return self.item
