@@ -19,18 +19,21 @@
 *.pyc
 __pycache__
 db.sqlite3
+
+#DB
 .DS_Store
+
+#media files
 media
 
 .idea
 
 lib
-
 items/
-kickons/
-manage.py
+include/
 
 
+#Virtual Environment
 myvenv/
 bin/
 pyvenv.cfg
