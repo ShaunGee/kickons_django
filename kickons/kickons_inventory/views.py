@@ -4,8 +4,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 
-from .serializers import UserSerializer, LoginSerializer, ItemSerializer
-from .models import User,Login, Item
+from .serializers import UserSerializer, LoginSerializer, ItemSerializer, DeliverySerializer
+from .models import User,Login, Item, Delivery
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
@@ -71,3 +71,8 @@ class ItemViewSet(viewsets.ModelViewSet):
     def allItems(self,request):
     
         '''
+
+
+class DeliverViewSet(viewsets.ModelViewSet):
+    queryset = Delivery.objects.all();
+    serializer_class = DeliverySerializer
