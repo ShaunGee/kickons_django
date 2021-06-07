@@ -37,26 +37,39 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class LoginViewSet(viewsets.ModelViewSet):
-    queryset = Login.objects.all()
-    serializer_class = LoginSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
     @action(['post',], detail=False)
     def verification(self,request):
         try:
+            #incoming password and email from client
             incomingPassword = self.request.data['password']
             incomingEmail = self.request.data['email']
 
-            print(incomingPassword)
-            print(incomingEmail)
+            #uses the incoming email to retrieve the corrosponding information in database
 
-            dbUn = Login.objects.get(email=incomingEmail).email
-            dbPwd = Login.objects.get(email=incomingEmail).password
+            user = User.objects.get(email=incomingEmail)
 
+            dbUn = user.email
+            dbPwd = user.password
+
+            #checks to see if incoming password matches the stored username in db belonging to the user whos email matches incoming email
             if incomingPassword == dbPwd:
                 print("match")
-                return JsonResponse({'status': 'logged in'})
+                response = {
+                    'status':'logged in',
+                    'user_id': user.id,
+                    'f_name': user.f_name,
+                    'l_name': user.l_name,
+                    'email': user.email,
+                }
 
+
+                return JsonResponse(response)
+                #return JsonResponse({'status': 'logged in'})
+        #if username doesn't exists then following execption is catcbed and 'user doesn't exist' gets sent back as a response
         except ObjectDoesNotExist:
             print('doesnt exist')
         return JsonResponse({'status': 'not logged in'})

@@ -7,6 +7,7 @@ from django.db import models
 
 
 class User(models.Model):
+
     f_name = models.CharField(max_length=20)
     l_name = models.CharField(max_length=20)
     email = models.EmailField(unique=True)
@@ -23,6 +24,8 @@ class User(models.Model):
 
     def getEmail(self):
         return self.email
+
+
 
 
 
