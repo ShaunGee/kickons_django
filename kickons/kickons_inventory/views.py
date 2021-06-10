@@ -4,8 +4,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 
-from .serializers import UserSerializer, LoginSerializer, ItemSerializer, DeliverySerializer
-from .models import User,Login, Item, Delivery
+from .serializers import UserSerializer, LoginSerializer, ItemSerializer, DeliveryDetailsSerializer, DelivererSerializer, GetDeliveryDetailsSerializer
+from .models import User,Login, Item, DeliveryDetails, Deliverer
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
@@ -79,13 +79,36 @@ class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
-'''
-    @action(['get',])
-    def allItems(self,request):
-    
-        '''
 
 
 class DeliverViewSet(viewsets.ModelViewSet):
-    queryset = Delivery.objects.all();
-    serializer_class = DeliverySerializer
+
+    #queryset below filter only gets data where on_route = false to be sent
+    queryset = DeliveryDetails.objects.all().filter(on_route = False)
+    serializer_class = DeliveryDetailsSerializer
+
+
+    def list(self, request, *args, **kwargs):
+
+
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        print('retrieve')
+        return super().retrieve(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        print('create')
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        print('update')
+        return super().update(request, *args, **kwargs)
+
+class DelivererViewSet(viewsets.ModelViewSet):
+    queryset = DeliveryDetails.objects.all()
+    serializer_class = DelivererSerializer
+
+class GetDeliveriesViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = DeliveryDetails.objects.filter(on_route=False)
+    serializer_class = GetDeliveryDetailsSerializer

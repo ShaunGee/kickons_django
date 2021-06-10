@@ -15,6 +15,7 @@ class User(models.Model):
     age = models.IntegerField()
     gender = models.CharField(max_length=20)
     password = models.CharField(max_length=65, default='none')
+    isDeliverer = models.BooleanField(default=False)
 
     def __str__(self):
         return self.f_name
@@ -25,9 +26,9 @@ class User(models.Model):
     def getEmail(self):
         return self.email
 
-
-
-
+    def deliveryCheck(self):
+        if (self.isDeliverer):
+            return self
 
 class Inventory(models.Model):
     models.ForeignKey(User, on_delete=models.CASCADE)
@@ -36,7 +37,6 @@ class Inventory(models.Model):
 
     def __str__(self):
         return self.item
-
 
 class Item(models.Model):
     item_title = models.CharField(max_length=20)
@@ -47,14 +47,27 @@ class Item(models.Model):
     def __str__(self):
         return self.item_title
 
-class Delivery(models.Model):
+class DeliveryDetails(models.Model):
+    on_route=models.BooleanField(default=False)
+    delivered = models.BooleanField(default=False)
     item_id =models.ForeignKey(Item, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     delivery_longtitude = models.FloatField(default=0)
     delivery_latitude = models.FloatField(default=0)
 
     def __str__(self):
-        return self.user_id
+        return str(self.id)
+
+class Deliverer(models.Model):
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, default='none')
+    deliverer_active = models.BooleanField(default=False)
+    deliverer_lat = models.FloatField(default=0)
+    deliverer_long = models.FloatField(default=0)
+    Delivery_details_id = models.OneToOneField(to=DeliveryDetails, on_delete=models.CASCADE, primary_key=True)
+
+
+    def __str__(self):
+        return self.user
 
 class Login(models.Model):
     email = models.ForeignKey(User, on_delete=models.CASCADE, to_field='email')
@@ -63,4 +76,3 @@ class Login(models.Model):
 
     def __str__(self):
         return self.email
-
