@@ -20,6 +20,8 @@ class User(models.Model):
     def __str__(self):
         return self.f_name
 
+
+
     def getAge(self):
         return self.f_name, ' has an age of ', self.age
 
@@ -47,6 +49,10 @@ class Item(models.Model):
     def __str__(self):
         return self.item_title
 
+
+
+
+
 class DeliveryDetails(models.Model):
     on_route=models.BooleanField(default=False)
     delivered = models.BooleanField(default=False)
@@ -54,20 +60,30 @@ class DeliveryDetails(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     delivery_longtitude = models.FloatField(default=0)
     delivery_latitude = models.FloatField(default=0)
+    deliverer = models.OneToOneField(to=Deliverer, on_delete=models.CASCADE, primary_key=True, default=0)
+    #why is to_deliverer red. Fix this
+
+
 
     def __str__(self):
         return str(self.id)
 
+
+
 class Deliverer(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, default='none')
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, default=0)
     deliverer_active = models.BooleanField(default=False)
     deliverer_lat = models.FloatField(default=0)
     deliverer_long = models.FloatField(default=0)
-    Delivery_details_id = models.OneToOneField(to=DeliveryDetails, on_delete=models.CASCADE, primary_key=True)
 
+
+    '''
+    This will be updated when a deliverer decides to accept a job. It will show his live location. Once the delivery
+    is complete, the deliverer_active will be set to False (may or may not delete the entry,  havn't decided yet)
+    '''
 
     def __str__(self):
-        return self.user
+        return str(self.user)
 
 class Login(models.Model):
     email = models.ForeignKey(User, on_delete=models.CASCADE, to_field='email')
