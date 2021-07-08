@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 
 from .serializers import UserSerializer, LoginSerializer, ItemSerializer, DeliveryDetailsSerializer, \
-    DelivererSerializer, GetDeliveryDetailsSerializer, GetSerializer
+    DelivererSerializer, GetDeliveryDetailsSerializer, GetSerializer, GetDeliveriesPerUserSerializer
 from .models import User, Login, Item, DeliveryDetails, Deliverer
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
@@ -78,57 +78,82 @@ class DeliverViewSet(viewsets.ModelViewSet):
     queryset = DeliveryDetails.objects.all()
     serializer_class = DeliveryDetailsSerializer
 
+
+
     @action(['put'], detail=False)
     def update_on_route_status(self, request):
-        #print("sdfsdfsdfsdfsdfsdfsdfsdfsdfsdf")
-        #print(self.request.data)
-        deliveryId = self.request.data['id']
-        delivery = DeliveryDetails.objects.get(id=deliveryId)
 
+        deliveryId = self.request.data['id']
+        #delivererID = self.request.data['deliverer_id']
+        #print(delivererID)
+
+        delivery = DeliveryDetails.objects.get(id=deliveryId)
+        #deliverer = Deliverer.objects.get(user=delivererID)
+
+        #deliverer.deliverer_active = True
         delivery.on_route = self.request.data['on_route']
+
+
         delivery.save()
+        #deliverer.save()
+
+        return JsonResponse({'success': 'success'})
+
+'''
+we want to show the delivery details of a deliverer where on_route is true and delivered is false
+'''
+
+
+
+class DelivererViewSet(viewsets.ModelViewSet):
+
+    queryset = Deliverer.objects.all()
+    serializer_class = DelivererSerializer
+
+    @action(['post',], detail=False)
+    def cancel_delivery(self, request):
+
+        deliverer_id = self.request.data['Deliverer_id']
+        delivery_details_id = self.request.data['DeliveryDetails_id']
+        deliverer = Deliverer.objects.get(user=deliverer_id)
+        deliverer.deliverer_active = False
+        deliverer.save()
+
+        deliveryDetails = DeliveryDetails.objects.get(id=delivery_details_id)
+        deliveryDetails.delivered = False
+        deliveryDetails.on_route = False
+        deliveryDetails.save()
+
+#        deliverer_model = Deliverer.objects.get(id = deliverer_id)
+
+
+        return JsonResponse({'success': 'success'})
+
+    @action(['post',], detail=False)
+    def update_deliverer_active_status(self, request):
+        delivererId = self.request.data['user']
+        deliveryDetailId = self.request.data['DeliveryDetails']
+
+        print('deliveryID: '+ str(delivererId))
+        deliverer = Deliverer.objects.get(user=delivererId)
+        deliverer.deliverer_active = True
+        deliverer.DeliveryDetails = DeliveryDetails.objects.get(id=deliveryDetailId)
+        deliverer.save()
 
         return JsonResponse({'success': 'success'})
 
 
-class DelivererViewSet(viewsets.ModelViewSet):
-    queryset = Deliverer.objects.all()
-    serializer_class = DelivererSerializer
-
-
-
-
 class GetDeliveriesViewSet(viewsets.ModelViewSet):
-    queryset = DeliveryDetails.objects.filter(on_route = False)
+    queryset = DeliveryDetails.objects.filter(on_route = False).filter(delivered = False)
     serializer_class = GetDeliveryDetailsSerializer
 
 
-
-
-    @action(['get',], detail=True)
+    @action(['post',], detail=False)
     def get_all_deliveries_of_user(self, request, **kwargs):
 
-        print(self.request.data)
-        pk = self.request.data[0]['user_id']
-        #pk = self.request.data[0]['user_id']
-        print(pk)
-
-        deliveries = Deliverer.objects.filter(user_id=pk)
-        serializer = GetSerializer(deliveries, many=True, context={'request':request})
-        print(serializer.data)
+        deliverer_id = self.request.data[0]['deliverer_id']
+        print(deliverer_id)
+        deliverer = Deliverer.objects.filter(user = deliverer_id).filter(deliverer_active = True).filter(DeliveryDetails__delivered = False).filter(DeliveryDetails__on_route = True)
+        serializer = GetDeliveriesPerUserSerializer(deliverer, many=True, context={'request':request})
 
         return Response(serializer.data)
-
-'''
-    @action(['put',], detail=False)
-    def get_all_deliveries_of_user(self, request, **kwargs):
-        pk = self.request.data[0]['user_id']
-        print(pk)
-
-        deliveries = Deliverer.objects.filter(user_id=pk)
-        serializer = GetSerializer(deliveries, many=True, context={'request':request})
-        print(serializer.data)
-
-        return Response(serializer.data)
-      
-'''

@@ -58,10 +58,13 @@ class GetDeliveryDetailsSerializer(serializers.ModelSerializer):
         model = DeliveryDetails
         fields = '__all__'
 
-# class GetDeliveriesPerUserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = DeliveryDetails
-#         fields = '__all__'
+class GetDeliveriesPerUserSerializer(serializers.ModelSerializer):
+
+    DeliveryDetails = GetDeliveryDetailsSerializer()
+
+    class Meta:
+        model = Deliverer
+        fields = '__all__'
 
 
 
@@ -72,3 +75,4 @@ class GetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Deliverer
         fields = '__all__'
+
